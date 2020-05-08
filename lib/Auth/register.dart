@@ -1,5 +1,11 @@
+import 'dart:convert';
+
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:hatud_foods/Auth/login.dart';
+import 'package:hatud_foods/api/CallApi.dart';
+import 'package:hatud_foods/body_contents/homepage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -10,6 +16,14 @@ class _RegisterPageState extends State<RegisterPage> {
   String _password;
   bool _passwordVisible;
   bool _confirmPasswordVisible;
+
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController passwordConfirmationController = TextEditingController();
+
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -30,13 +44,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   width: double.infinity,
                   image: AssetImage('assets/login_head.png'),
                 ),
-//                Container(
-//                  margin: EdgeInsets.only(top: 10, left: 140),
-//                  child: Image(
-//                    height: 90,
-//                    image: AssetImage('assets/app_logo.png'),
-//                  ),
-//                ),
                 Container(
                   margin: EdgeInsets.only(top: 60.0),
                   padding: EdgeInsets.symmetric(horizontal: 32),
@@ -62,6 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     elevation: 2.0,
                     borderRadius: BorderRadius.all(Radius.circular(20)),
                     child: TextField(
+                      controller: firstNameController,
                       onChanged: (String value){
 
                       },
@@ -89,6 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     elevation: 2.0,
                     borderRadius: BorderRadius.all(Radius.circular(20)),
                     child: TextField(
+                      controller: lastNameController,
                       onChanged: (String value){
 
                       },
@@ -116,6 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     elevation: 2.0,
                     borderRadius: BorderRadius.all(Radius.circular(20)),
                     child: TextField(
+                      controller: phoneNumberController,
                       onChanged: (String value){
 
                       },
@@ -144,6 +154,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     elevation: 2.0,
                     borderRadius: BorderRadius.all(Radius.circular(30)),
                     child: TextFormField(
+                      controller: passwordController,
                       onChanged: (String value){},
                       cursorColor: Colors.green[800],
                       decoration: InputDecoration(
@@ -185,6 +196,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     elevation: 2.0,
                     borderRadius: BorderRadius.all(Radius.circular(30)),
                     child: TextFormField(
+                      controller: passwordConfirmationController,
                       obscureText: true,
                       onChanged: (String value){},
                       cursorColor: Colors.green[800],
@@ -221,16 +233,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 child: FlatButton(
                   child: Text(
-                    "Register",
+                    _isLoading ? "Creating Account..." : "Register",
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                         fontSize: 18
                     ),
                   ),
-                  onPressed: (){
-
-                  },
+                  onPressed: _isLoading ? null : _handleLogin,
                 ),
               ),
             ),
@@ -253,5 +263,57 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+
+  void _handleLogin() async{
+    setState(() {
+      _isLoading = true;
+    });
+
+    Future<String> _getPhoneId() async{
+      DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+      if(Theme.of(context).platform == TargetPlatform.iOS){
+        IosDeviceInfo iosDeviceInfo = await deviceInfoPlugin.iosInfo;
+        return iosDeviceInfo.identifierForVendor;
+      }else{
+        AndroidDeviceInfo androidDeviceInfo = await deviceInfoPlugin.androidInfo;
+        return androidDeviceInfo.androidId;
+      }
+    }
+
+    String deviceId = await _getPhoneId();
+
+
+    var data = {
+      'firstName' : firstNameController.text,
+      'lastName' : lastNameController.text,
+      'phoneNumber' : phoneNumberController.text,
+      'password' : passwordController.text,
+      'password_confirmation' : passwordConfirmationController.text,
+      'deviceId' :  deviceId,
+    };
+
+    print("XXXXXXXXXXX $data");
+
+    var res = await CallApi().postData(data, 'customer_register');
+    var user = json.decode(res.body);
+    print(user['success']);
+    if(user['success']){
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      localStorage.setString('token', user['token']);
+      localStorage.setString('student', json.encode(user['customer']));
+      Navigator.push(
+        context,
+        new MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
+      );
+    }
+    setState(() {
+      _isLoading = false;
+    });
+    print(user);
+
+
   }
 }

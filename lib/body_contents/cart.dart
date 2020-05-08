@@ -9,14 +9,14 @@ class _CartPageState extends State<CartPage> {
 
   final List<Map> items = [
     {
-      "image":"https://panlasangpinoy.com/wp-content/uploads/2020/01/pork-siomai-500x485.jpg",
+      "image":"https://food.fnr.sndimg.com/content/dam/images/food/fullset/2011/5/4/2/FNM_060111-Perfect-Patties-004_s4x3.jpg.rend.hgtvcom.826.620.suffix/1371597647270.jpeg",
       "title":"Breakfast Set",
-      "price": 20
+      "price": 20.00
     },
     {
-      "image":"https://orangemagazine.ph/wp-content/uploads/2016/11/Sapin-Sapin-of-Imus.jpg",
+      "image":"https://food.fnr.sndimg.com/content/dam/images/food/fullset/2011/5/4/2/FNM_060111-Perfect-Patties-004_s4x3.jpg.rend.hgtvcom.826.620.suffix/1371597647270.jpeg4",
       "title":"Veg Burger",
-      "price": 30
+      "price": 30.50
     },
   ];
 

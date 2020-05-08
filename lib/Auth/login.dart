@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:hatud_foods/Auth/register.dart';
+import 'package:hatud_foods/api/CallApi.dart';
+import 'package:hatud_foods/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,6 +18,23 @@ class _LoginPageState extends State<LoginPage> {
 
   String _password;
   bool _passwordVisible = true;
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  _showMsg(msg){
+    final snackBar = SnackBar(
+      content: Text(msg),
+      action: SnackBarAction(
+        label: 'Close',
+        onPressed: (){
+
+        },
+      ),
+    );
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
+
 
   @override
   void initState() {
@@ -80,6 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                     onChanged: (String value){
 
                     },
+                    controller: phoneNumberController,
                     cursorColor: Colors.green[700],
                     decoration: InputDecoration(
                       hintText: "Phone Number",
@@ -106,6 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                   elevation: 2.0,
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                   child: TextFormField(
+                    controller: passwordController,
                     onChanged: (String value){},
                     cursorColor: Colors.green[800],
                     decoration: InputDecoration(
@@ -152,16 +175,14 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: FlatButton(
                     child: Text(
-                      "Login",
+                        _isLoading? 'Logging..' : 'LOGIN',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                         fontSize: 18
                       ),
                     ),
-                    onPressed: (){
-
-                    },
+                    onPressed: _isLoading? null : _login,
                   ),
                 ),
               ),
@@ -196,6 +217,35 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  void _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    var data = {
+      'phoneNumber' : phoneNumberController.text,
+      'password' : passwordController.text,
+    };
+    
+    print("XXXXXXXXXXXX $data");
+
+    var res = await CallApi().postData(data, 'customer_login');
+    var body = json.decode(res.body);
+    if(body['success']){
+      print('Login Success!');
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      localStorage.setString('token', body['token']);
+      localStorage.setString('student', json.encode(body['student']));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BootPage()));
+    }else{
+      _showMsg(body['message']);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
 }
+
 
