@@ -18,23 +18,19 @@ class _HomePageState extends State<HomePage> {
     var jsonData = json.decode(data.body);
     List<Categories> categories = [];
     for(var u in jsonData['data']){
-      print("Counte number:${u}");
       int id = u['id'];
       String name = u['name'];
       Categories categorie = Categories(id, name);
       categories.add(categorie);
     }
-    print("Categories = ${categories}");
     return categories;
   }
 
   Future<List<Stores>> _getSeller() async{
     var data = await http.get("http://192.168.254.102:8000/api/seller");
     var jsonData = json.decode(data.body);
-    print("++++++++++++++++++ ${jsonData} +++++++++++++++++");
     List<Stores> foodStore = [];
     for(var u in jsonData['data']){
-      print("Counte number:${u}");
       String owner = u['firstName']+' '+u['lastName'];
       String name = u['businessName'];
       Stores foodBusiness = Stores(owner, name);
@@ -46,12 +42,9 @@ class _HomePageState extends State<HomePage> {
   Future<List<Foods>> _getFoods() async{
     var data = await http.get("http://192.168.254.102:8000/api/foods");
     var jsonData = json.decode(data.body);
-    print("++++++++++++++++++ ${jsonData} +++++++++++++++++");
     List<Foods> foodDetails = [];
-    print('__________________________________________________________________________________________+++++++++++_________________________________________________');
-    print("00000000000000000000 ${foodDetails} 00000000000000000000");
     for(var u in jsonData['data']){
-      print("Counte number:${u}");
+      int id = u['id'];
       String name = u['name'];
       String detail = u['detail'];
       String foodPicture = u['foodPicture'];
@@ -59,10 +52,9 @@ class _HomePageState extends State<HomePage> {
       String category = u['category'];
       String price = u['price'];
       int available = u['available'];
-      Foods foodBusiness = Foods(name, detail, foodPicture, seller, category, price, available);
+      Foods foodBusiness = Foods(id, name, detail, foodPicture, seller, category, price, available);
       foodDetails.add(foodBusiness);
     }
-    print("Food Details --------------------------- ${foodDetails} -----------------------");
     return foodDetails;
   }
 
@@ -155,7 +147,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     );
                   }else{
-                    print("++++++++++++++++++++++++++++++++++++++ ${snapshot.data.length}");
                     return GridView.builder(
                       padding: EdgeInsets.all(5.0),
                         scrollDirection: Axis.vertical,
@@ -164,58 +155,45 @@ class _HomePageState extends State<HomePage> {
                         physics: ScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          childAspectRatio: MediaQuery.of(context).size.height / 800,
+                          childAspectRatio: MediaQuery.of(context).size.height / 900,
                           crossAxisSpacing: 5.0,
                           mainAxisSpacing: 5.0,
                         ),
                         itemBuilder: (BuildContext context, int index){
-                          return Column(
-                            children: <Widget>[
-                              Image(image: NetworkImage('https://food.fnr.sndimg.com/content/dam/images/food/fullset/2011/5/4/2/FNM_060111-Perfect-Patties-004_s4x3.jpg.rend.hgtvcom.826.620.suffix/1371597647270.jpeg'),),
-                              SizedBox(height: 5,),
-                              Text(snapshot.data[index].name),
-                              SizedBox(height: 10.0,),
-                              Text('₱ ${snapshot.data[index].price}'),
-                            ],
+                          return GestureDetector(
+                            onTap: (){
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text(snapshot.data[index].id.toString()),
+                              ));
+                            },
+                            child: Column(
+                              children: <Widget>[
+                                Image(image: NetworkImage('https://food.fnr.sndimg.com/content/dam/images/food/fullset/2011/5/4/2/FNM_060111-Perfect-Patties-004_s4x3.jpg.rend.hgtvcom.826.620.suffix/1371597647270.jpeg'),),
+                                SizedBox(height: 5,),
+                                Text(
+                                  snapshot.data[index].name,
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 10.0,),
+                                Text(
+                                  '₱ ${snapshot.data[index].price}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 18.0,
+                                    color: Colors.red[900],
+                                  ),
+                                ),
+                              ],
+                            ),
                           );
                         }
                     );
                   }
                 }
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  SliverToBoxAdapter _foodBrochure(String name, String price){
-    return SliverToBoxAdapter(
-      child: Stack(
-        children: <Widget>[
-          Container(
-            height: 200.0,
-            child: Swiper(
-              itemCount: 10,
-              autoplay: true,
-              curve: Curves.easeIn,
-              itemBuilder: (BuildContext context, int index){
-                return Image(
-                  image: NetworkImage(''),
-                );
-              },
-            ),
-          ),
-          Container(
-            height: 200,
-            color: Colors.black.withOpacity(0.5),
-          ),
-          Positioned(
-            bottom: 20,
-            left: 20,
-            child: Text("Heavy discount on meals today only.", style: TextStyle(
-                color: Colors.white
-            )),
           ),
         ],
       ),
@@ -298,6 +276,7 @@ class Stores{
 }
 
 class Foods{
+  final int id;
   final String name;
   final String detail;
   final String foodPicture;
@@ -306,7 +285,7 @@ class Foods{
   final String price;
   final int available;
 
-  Foods(this.name, this.detail, this.foodPicture, this.seller, this.category,
+  Foods(this.id, this.name, this.detail, this.foodPicture, this.seller, this.category,
       this.price, this.available);
 
 }

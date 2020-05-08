@@ -14,7 +14,7 @@ class _CartPageState extends State<CartPage> {
       "price": 20.00
     },
     {
-      "image":"https://food.fnr.sndimg.com/content/dam/images/food/fullset/2011/5/4/2/FNM_060111-Perfect-Patties-004_s4x3.jpg.rend.hgtvcom.826.620.suffix/1371597647270.jpeg4",
+      "image":"https://food.fnr.sndimg.com/content/dam/images/food/fullset/2011/5/4/2/FNM_060111-Perfect-Patties-004_s4x3.jpg.rend.hgtvcom.826.620.suffix/1371597647270.jpeg",
       "title":"Veg Burger",
       "price": 30.50
     },

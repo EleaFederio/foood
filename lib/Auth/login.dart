@@ -231,11 +231,12 @@ class _LoginPageState extends State<LoginPage> {
 
     var res = await CallApi().postData(data, 'customer_login');
     var body = json.decode(res.body);
+    print("00000000000 ${body}");
     if(body['success']){
       print('Login Success!');
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       localStorage.setString('token', body['token']);
-      localStorage.setString('student', json.encode(body['student']));
+      localStorage.setString('users', json.encode(body['customer']));
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BootPage()));
     }else{
       _showMsg(body['message']);

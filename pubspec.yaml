@@ -27,6 +27,12 @@ dependencies:
   shared_preferences: ^0.5.7+1
   device_info: ^0.4.2+3
   flutter_swiper: ^1.1.6
+  flutter_screenutil: ^1.1.0
+  line_awesome_flutter: ^1.0.1
+  animated_theme_switcher: ^1.0.6
+  location: ^3.0.2
+  google_maps_flutter: ^0.5.27+1
+  double_back_to_close_app: ^1.2.0
 
 dev_dependencies:
   flutter_test:
