@@ -78,8 +78,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 ListTile(
                                   contentPadding: EdgeInsets.all(0),
-                                  title: Text('Phone Number'),
-                                  subtitle: Text('Address Here'),
+                                  title: Text(userData['phoneNumber'] == null ? "Phone number not set" : userData['phoneNumber']),
+                                  subtitle: Text(userData['address'] == null ? 'Address not set' : userData['address']),
                                 ),
                               ],
                             ),
@@ -90,24 +90,23 @@ class _ProfilePageState extends State<ProfilePage> {
                               Expanded(
                                 child: Column(
                                   children: <Widget>[
-                                    Text('Some Text'),
-                                    Text('Text Again'),
+                                    FlatButton(
+                                      onPressed: (){
+
+                                      },
+                                      child: IconButton(
+                                        icon: Icon(Icons.shopping_cart),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
                               Expanded(
                                 child: Column(
                                   children: <Widget>[
-                                    Text('Some Text'),
-                                    Text('Text Again'),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: <Widget>[
-                                    Text('Some Text'),
-                                    Text('Text Again'),
+                                    IconButton(
+                                      icon: Icon(Icons.local_shipping),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -144,17 +143,17 @@ class _ProfilePageState extends State<ProfilePage> {
                       Divider(),
                       ListTile(
                         title: Text('Phone Number:'),
-                        subtitle: Text('+639385784607'),
+                        subtitle: Text(userData['phoneNumber']),
                         leading: Icon(Icons.phone),
                       ),
                       ListTile(
                         title: Text('Email:'),
-                        subtitle: Text('myamazingemail@email.com'),
+                        subtitle: Text(userData['email'] == null ? "Email not set" : userData['email']),
                         leading: Icon(Icons.email),
                       ),
                       ListTile(
                         title: Text('Address:'),
-                        subtitle: Text('Amazing St. Gubat, Sorsogon'),
+                        subtitle: Text(userData['address'] == null ? 'Address not set' : userData['address']),
                         leading: Icon(Icons.location_on),
                       ),
                       Divider(),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:hatud_foods/body_contents/foodDetails.dart';
 import 'package:http/http.dart' as http;
 
 class CallApi{
@@ -14,6 +15,11 @@ class CallApi{
   getData(apiUrl) async {
     var fullUrl = _url + apiUrl;
     return await http.get(fullUrl, headers: _setHeaders());
+  }
+
+  getDataFullUrl(apiUrl) async {
+    var fullUrl = apiUrl;
+    var result = await http.get(fullUrl, headers: _setHeaders());
   }
 
   _setHeaders() => {

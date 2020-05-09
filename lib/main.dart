@@ -12,7 +12,14 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_){
     runApp(MaterialApp(
-      home: BootPage(),
+      home: Scaffold(
+        body: DoubleBackToCloseApp(
+          child: BootPage(),
+          snackBar: const SnackBar(
+            content: Text('Tap back again to leave'),
+          ),
+        ),
+      ),
     ));
   });
 
@@ -117,11 +124,11 @@ class _BootPageState extends State<BootPage> {
             title: Text('Cart', style: TextStyle(color: Colors.blueGrey),),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list, color: Colors.blueGrey,),
-            title: Text('Orders', style: TextStyle(color: Colors.blueGrey),),
+            icon: Icon(Icons.notifications, color: Colors.blueGrey,),
+            title: Text('Notification', style: TextStyle(color: Colors.blueGrey),),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline, color: Colors.blueGrey,),
+            icon: Icon(Icons.person, color: Colors.blueGrey,),
             title: Text('My Account', style: TextStyle(color: Colors.blueGrey),),
           ),
         ]
@@ -131,7 +138,7 @@ class _BootPageState extends State<BootPage> {
   void checkLoginStatus() async {
       SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       if(sharedPreferences.getString("token") == null){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage() ));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage() ));
   //        _showAuthAlert(context);
       }
     }

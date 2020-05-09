@@ -2,7 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:hatud_foods/api/CallApi.dart';
+import 'package:hatud_foods/body_contents/foodDetails.dart';
+import 'package:hatud_foods/body_contents/foodDetails.dart';
 import 'package:http/http.dart' as http;
+
+import 'foodDetails.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -52,7 +57,8 @@ class _HomePageState extends State<HomePage> {
       String category = u['category'];
       String price = u['price'];
       int available = u['available'];
-      Foods foodBusiness = Foods(id, name, detail, foodPicture, seller, category, price, available);
+      Map href = u['href'];
+      Foods foodBusiness = Foods(id, name, detail, foodPicture, seller, category, price, available, href);
       foodDetails.add(foodBusiness);
     }
     return foodDetails;
@@ -62,6 +68,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+//      backgroundColor: Colors.yellow[400],
       body: ListView(
         children: <Widget>[
           Padding(
@@ -161,10 +168,17 @@ class _HomePageState extends State<HomePage> {
                         ),
                         itemBuilder: (BuildContext context, int index){
                           return GestureDetector(
-                            onTap: (){
-                              Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text(snapshot.data[index].id.toString()),
-                              ));
+                            onTap: () async {
+
+                            Map aaaa = snapshot.data[index].href;
+                              print("XXXXXXXXXXXXXXXXXXXXXXXXXX ${aaaa['show_food']}");
+                              var data = await http.get(aaaa['show_food']);
+                              var jsonData = json.decode(data.body);
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => FoodDetailsPage(jsonData)),
+                              );
                             },
                             child: Column(
                               children: <Widget>[
@@ -284,8 +298,9 @@ class Foods{
   final String category;
   final String price;
   final int available;
+  final Map href;
 
   Foods(this.id, this.name, this.detail, this.foodPicture, this.seller, this.category,
-      this.price, this.available);
+      this.price, this.available, this.href);
 
 }
